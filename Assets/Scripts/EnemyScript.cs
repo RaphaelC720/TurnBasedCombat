@@ -1,5 +1,6 @@
-using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
+using static P1Script;
 
 public class EnemyScript : MonoBehaviour
 {
@@ -11,26 +12,21 @@ public class EnemyScript : MonoBehaviour
         Died = 3
     }
 
-    public enum EnemyType
-    {
-        Fire = 0,
-        Water = 1,
-        Grass = 2,
-        Lightning = 3,
-        Air = 4,
-        Dark = 5,
-        Light = 6
-    }
-
     public GameObject enemy;
     public SpriteRenderer enemySR;
-    public int MaxHealth;
-    public int CurrentHealth;
+    public float MaxHealth;
+    public float CurrentHealth;
     public EnemyState eState;
     public P1Script target;
+    public ArrowQTE ArrowScript;
+    public TurnManager myTurnMgr;
+
+    public bool endTurn;
     void Start()
     {
         enemySR = GetComponent<SpriteRenderer>();
+        myTurnMgr = TurnManager.t_Mgr;
+
     }
 
     void Update()
@@ -84,10 +80,76 @@ public class EnemyScript : MonoBehaviour
             //myAnim.Play("Dying");
         }
     }
+
+    IEnumerator DoQTE(QTEtype type, int noDmg, int lowDmg, int normalDmg)
+    {
+        QTEresult result = QTEresult.Perfect;
+
+        if (type == QTEtype.Arrows)
+        {
+            ArrowQTE aQTE = FindAnyObjectByType<ArrowQTE>();
+            yield return StartCoroutine(aQTE.StartArrowQTE((r) => result = r));
+        }
+
+        if (result == QTEresult.Miss)
+        {
+            target.TakeDmg(normalDmg);
+        }
+        else if (result == QTEresult.Good)
+        {
+            target.TakeDmg(lowDmg);
+        }
+        else if (result == QTEresult.Perfect)
+        {
+            target.TakeDmg(noDmg);
+        }
+        SetEnemyState(EnemyState.Idle);
+        endTurn = true;
+    }
+
+    public void randomATK()
+    {
+        int r = Random.Range(0, 3);
+        switch (r)
+        {
+            case 0:
+                Attack1();
+                break;
+            case 1:
+                Attack2();
+                break;
+            case 2:
+                Attack3();
+                break;
+        }
+        return;
+    }
+    public void Attack1()
+    {
+        SetEnemyState(EnemyState.Attacking);
+        ArrowScript.timeLimit = 2f;
+        ArrowScript.numArrows = 5;
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 10, 15));
+    }
+    public void Attack2()
+    {
+        SetEnemyState(EnemyState.Attacking);
+        ArrowScript.timeLimit = 3f;
+        ArrowScript.numArrows = 7;
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 15, 20));
+    }
+    public void Attack3()
+    {
+        SetEnemyState(EnemyState.Attacking);
+        ArrowScript.timeLimit = 3f;
+        ArrowScript.numArrows = 10;
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 20, 25));
+    }
     public void TakeDmg(int dmg)
     {
         EnemyState s = EnemyState.TakingDmg;
         CurrentHealth -= dmg;
+        enemySR.color = Color.red;
         SetEnemyState(s);
     }
     public void die()
