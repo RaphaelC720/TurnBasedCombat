@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static P1Script;
 
 public class EnemyScript : MonoBehaviour
@@ -134,5 +135,6 @@ public class EnemyScript : MonoBehaviour
         EnemyState e = EnemyState.Died;
         Destroy(enemy);
         SetEnemyState(e);
+        SceneManager.LoadScene("You Win!");
     }
 }
