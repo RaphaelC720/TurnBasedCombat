@@ -20,6 +20,8 @@ public class TurnManager : MonoBehaviour
     {
         t_Mgr = this;
         CurrentTurn = TurnOrder.PlayerTurn;
+        AttackUI.SetActive(true);
+
     }
     public void Update()
     {
@@ -31,7 +33,6 @@ public class TurnManager : MonoBehaviour
                 AttackUI.SetActive(false);
                 break;
             case TurnOrder.PlayerTurn:
-                AttackUI.SetActive(true);
                 break;
             case TurnOrder.EnemyTurn:
                 AttackUI.SetActive(false);
@@ -46,6 +47,8 @@ public class TurnManager : MonoBehaviour
         if (CurrentTurn == TurnOrder.EnemyTurn && enemy.endTurn)
         {
             enemy.endTurn = false;
+            AttackUI.SetActive(true);
+
             SetTurnState(TurnOrder.PlayerTurn);
         }
     }

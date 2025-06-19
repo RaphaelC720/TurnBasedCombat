@@ -43,16 +43,12 @@ public class EnemyScript : MonoBehaviour
         switch (eState)
         {
             case EnemyState.Idle:
-                enemySR.color = Color.white;
                 break;
             case EnemyState.Attacking:
-                enemySR.color = Color.white;
                 break;
             case EnemyState.TakingDmg:
-                enemySR.color = Color.red;
                 break;
             case EnemyState.Died:
-                enemySR.color = Color.grey;
                 break;
 
         }
@@ -61,24 +57,6 @@ public class EnemyScript : MonoBehaviour
     {
         if (eState == e) { return; }
         eState = e;
-
-        if (eState == EnemyState.Idle)
-        {
-            //myAnim.Play("Idle");
-        }
-        else if (eState == EnemyState.Attacking)
-        {
-            //myAnim.Play("Attacking");
-        }
-
-        else if (eState == EnemyState.TakingDmg)
-        {
-            //myAnim.Play("Hurt");
-        }
-        else if (eState == EnemyState.Died)
-        {
-            //myAnim.Play("Dying");
-        }
     }
 
     IEnumerator DoQTE(QTEtype type, int noDmg, int lowDmg, int normalDmg)
@@ -127,29 +105,28 @@ public class EnemyScript : MonoBehaviour
     public void Attack1()
     {
         SetEnemyState(EnemyState.Attacking);
-        ArrowScript.timeLimit = 2f;
+        ArrowScript.timeLimit = 3f;
         ArrowScript.numArrows = 5;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 10, 15));
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 8, 15));
     }
     public void Attack2()
     {
         SetEnemyState(EnemyState.Attacking);
-        ArrowScript.timeLimit = 3f;
+        ArrowScript.timeLimit = 4f;
         ArrowScript.numArrows = 7;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 15, 20));
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 12, 20));
     }
     public void Attack3()
     {
         SetEnemyState(EnemyState.Attacking);
-        ArrowScript.timeLimit = 3f;
+        ArrowScript.timeLimit = 5f;
         ArrowScript.numArrows = 10;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 20, 25));
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 17, 25));
     }
     public void TakeDmg(int dmg)
     {
         EnemyState s = EnemyState.TakingDmg;
         CurrentHealth -= dmg;
-        enemySR.color = Color.red;
         SetEnemyState(s);
     }
     public void die()

@@ -31,6 +31,7 @@ public class P1Script : MonoBehaviour
     public ArrowQTE AQTEScript;
     public EnemyScript enemy;
     public bool endTurn;
+    public GameObject atkUI;
 
     public TurnManager myTurnMgr;
 
@@ -46,26 +47,24 @@ public class P1Script : MonoBehaviour
 
     public void Update()
     {
-
+        if (CurrentHealth == 0)
+        {
+            die();
+        }
     }
     public void FixedUpdate()
     {
         switch (myState)
         {
             case PlayerState.Idle:
-                mySR.color = Color.white;
                 break;
             case PlayerState.Attacking:
-                mySR.color = Color.white;
                 break;
             case PlayerState.Blocking:
-                mySR.color = Color.white;
                 break;
             case PlayerState.TakingDmg:
-                //mySR.color = Color.red;
                 break;
             case PlayerState.Dying:
-                mySR.color = Color.grey;
                 break;
 
         }
@@ -80,27 +79,6 @@ public class P1Script : MonoBehaviour
     {
         if (myState == s) { return; }
         myState = s;
-
-        if (myState == PlayerState.Idle)
-        {
-            //myAnim.Play("Idle");
-        }
-        else if (myState == PlayerState.Attacking)
-        {
-            //myAnim.Play("Attacking");
-        }
-        else if (myState == PlayerState.Blocking)
-        {
-            //myAnim.Play("Block");
-        }
-        else if (myState == PlayerState.TakingDmg)
-        {
-            //myAnim.Play("Hurt");
-        }
-        else if (myState == PlayerState.Dying)
-        {
-            //myAnim.Play("Dying");
-        }
     }
 
     IEnumerator DoQTE(QTEtype type, int missDmg, int goodDmg, int perfectDmg)
@@ -133,28 +111,30 @@ public class P1Script : MonoBehaviour
     public void LightAttack()
     {
         SetState(PlayerState.Attacking);
-        AQTEScript.timeLimit = 3f;
+        AQTEScript.timeLimit = 4f;
         AQTEScript.numArrows = 5;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 3, 10));
+        atkUI.SetActive(false);
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 5, 15));
     }
     public void MediumAttack()
     {
         SetState(PlayerState.Attacking);
         AQTEScript.timeLimit = 5f;
         AQTEScript.numArrows = 10;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 5, 20));
+        atkUI.SetActive(false);
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 8, 25));
     }
     public void HeavyAttack()
     {
         SetState(PlayerState.Attacking);
-        AQTEScript.timeLimit = 5f;
+        AQTEScript.timeLimit = 6f;
         AQTEScript.numArrows = 15;
-        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 10, 40));
+        atkUI.SetActive(false);
+        StartCoroutine(DoQTE(QTEtype.Arrows, 0, 12, 40));
     }
     public void TakeDmg(int dmg)
     {
         PlayerState s = PlayerState.TakingDmg;
-        mySR.color = Color.red;
         CurrentHealth -= dmg;
         SetState(s);
     }
@@ -163,5 +143,6 @@ public class P1Script : MonoBehaviour
         PlayerState s = PlayerState.Dying;
         Destroy(player);
         SetState(s);
+
     }
 }
